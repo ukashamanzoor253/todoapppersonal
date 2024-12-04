@@ -110,15 +110,14 @@ const TodoApp = () => {
       <button
         onClick={editingTask ? updateTask : addTask}
         style={{
-          width: "17%",
+          width: "30%",
           marginBottom: "10px",
           padding: "8px",
           background: "#6666ff",
           color: "white",
           border: "1px solid",
           borderRadius: "27px",
-          position: "relative",
-          left: "433px"
+         
         }}
       >
         {editingTask ? "Update Task" : "Add Task"}
