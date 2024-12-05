@@ -4,7 +4,7 @@ import "./index.css"; // Import CSS for blinking effect
 const TodoApp = () => {
   const defaultData = [
     {
-      category: "General Areas",
+      category: "Car detailing",
       items: [
         { id: 1, text: "(Atlanta GA)", completed: false },
         { id: 2, text: "(Columbia SC)", completed: false },
@@ -23,8 +23,8 @@ const TodoApp = () => {
         { id: 15, text: "(Kennewick WA)", completed: false },
         { id: 16, text: "(Spokane WA)", completed: false },
         { id: 17, text: "(Phoenix AZ)", completed: false },
-        { id: 18, text: "(Tallahassee FL)", completed: false }
-      ]
+        { id: 18, text: "(Tallahassee FL)", completed: false },
+      ],
     },
     {
       category: "Car Detailing Services Areas",
@@ -34,8 +34,16 @@ const TodoApp = () => {
         { id: 21, text: "Sacramento California (70 Miles)", completed: false },
         { id: 22, text: "San Jose California (70 Miles)", completed: false },
         { id: 23, text: "Bakersfield California (70 Miles)", completed: false },
-        { id: 24, text: "San Bernardino California (70 Miles)", completed: false },
-        { id: 25, text: "Cathedral City California (70 Miles)", completed: false },
+        {
+          id: 24,
+          text: "San Bernardino California (70 Miles)",
+          completed: false,
+        },
+        {
+          id: 25,
+          text: "Cathedral City California (70 Miles)",
+          completed: false,
+        },
         { id: 26, text: "San Diego California (70 Miles)", completed: false },
         { id: 27, text: "Fayetteville, NC (50 Miles)", completed: false },
         { id: 28, text: "Denver Colorado (50 Miles)", completed: false },
@@ -50,8 +58,8 @@ const TodoApp = () => {
         { id: 37, text: "New Haven CT (50 Miles)", completed: false },
         { id: 38, text: "Boston MA (50 Miles)", completed: false },
         { id: 39, text: "New Brunswick NJ (50 Miles)", completed: false },
-        { id: 40, text: "New Ramsey NJ (50 Miles)", completed: false }
-      ]
+        { id: 40, text: "New Ramsey NJ (50 Miles)", completed: false },
+      ],
     },
     {
       category: "Technicians Without Water & Power",
@@ -62,9 +70,23 @@ const TodoApp = () => {
         { id: 62, text: "(Charlotte NC)", completed: false },
         { id: 63, text: "(Atlanta GA)", completed: false },
         { id: 64, text: "(Bakersfield CA)", completed: false },
-        { id: 65, text: "(Las Vegas NV)", completed: false }
-      ]
-    }
+        { id: 65, text: "(Las Vegas NV)", completed: false },
+      ],
+    },
+    {
+      category: "House Cleaning Services Areas",
+      items: [
+        {
+          id: 66,
+          text: " North Attleborough, MA (60 Miles)",
+          completed: false,
+        },
+        { id: 67, text: "Toledo Ohio (70 miles)", completed: false },
+        { id: 68, text: "San Francisco, CA (60 Miles)", completed: false },
+        { id: 69, text: "San Bernardino CA (70 Miles )", completed: false },
+        { id: 70, text: "Nashville TN (60 miles)", completed: false },
+      ],
+    },
   ];
 
   const [tasks, setTasks] = useState(() => {
@@ -113,21 +135,14 @@ const TodoApp = () => {
 
     const updatedTasks = [...tasks];
     updatedTasks[categoryIndex].items = updatedTasks[categoryIndex].items.map(
-      (task) =>
-        task.id === taskId ? { ...task, text: taskInput } : task
+      (task) => (task.id === taskId ? { ...task, text: taskInput } : task)
     );
     setTasks(updatedTasks);
     setTaskInput("");
     setEditingTask(null);
   };
 
-  const deleteTask = (categoryIndex, taskId) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[categoryIndex].items = updatedTasks[categoryIndex].items.filter(
-      (task) => task.id !== taskId
-    );
-    setTasks(updatedTasks);
-  };
+ 
 
   const toggleTaskCompletion = (categoryIndex, taskId) => {
     const updatedTasks = [...tasks];
@@ -159,7 +174,15 @@ const TodoApp = () => {
   };
 
   return (
-    <div style={{ maxWidth: "500px", margin: "auto", padding: "20px", background: "#293b46", color: "white" }}>
+    <div
+      style={{
+        maxWidth: "500px",
+        margin: "auto",
+        padding: "20px",
+        background: "#293b46",
+        color: "white",
+      }}
+    >
       <h1>Car Detailing Areas List</h1>
 
       <input
@@ -212,8 +235,12 @@ const TodoApp = () => {
                 onClick={() => toggleTaskCompletion(categoryIndex, task.id)}
               >
                 <span>{task.text}</span>
-                <button onClick={() => startEditing(task)}>Edit</button>
-                <button onClick={() => deleteTask(categoryIndex, task.id)}>Delete</button>
+                <button
+                  style={{ marginLeft: "30px" }}
+                  onClick={() => startEditing(task)}
+                >
+                  Edit
+                </button>
               </li>
             ))}
           </ul>
