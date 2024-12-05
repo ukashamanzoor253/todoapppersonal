@@ -2,30 +2,92 @@ import React, { useState, useEffect } from "react";
 import "./index.css"; // Import CSS for blinking effect
 
 const TodoApp = () => {
-  // Initialize state from localStorage
+  const defaultData = [
+    {
+      category: "General Areas",
+      items: [
+        { id: 1, text: "(Atlanta GA)", completed: false },
+        { id: 2, text: "(Columbia SC)", completed: false },
+        { id: 3, text: "(Boston MA)", completed: false },
+        { id: 4, text: "(Chicago IL)", completed: false },
+        { id: 5, text: "(Dallas TX)", completed: false },
+        { id: 6, text: "(Austin TX)", completed: false },
+        { id: 7, text: "(San Antonio TX)", completed: false },
+        { id: 8, text: "(Las Vegas NV)", completed: false },
+        { id: 9, text: "(Bakersfield CA)", completed: false },
+        { id: 10, text: "(Los Angeles CA)", completed: false },
+        { id: 11, text: "(San Diego CA)", completed: false },
+        { id: 12, text: "(Sacramento CA)", completed: false },
+        { id: 13, text: "(Oklahoma City OK)", completed: false },
+        { id: 14, text: "(Vacaville CA)", completed: false },
+        { id: 15, text: "(Kennewick WA)", completed: false },
+        { id: 16, text: "(Spokane WA)", completed: false },
+        { id: 17, text: "(Phoenix AZ)", completed: false },
+        { id: 18, text: "(Tallahassee FL)", completed: false }
+      ]
+    },
+    {
+      category: "Car Detailing Services Areas",
+      items: [
+        { id: 19, text: "Little Rock Arkansas (50 Miles)", completed: false },
+        { id: 20, text: "Cloverdale California (50 Miles)", completed: false },
+        { id: 21, text: "Sacramento California (70 Miles)", completed: false },
+        { id: 22, text: "San Jose California (70 Miles)", completed: false },
+        { id: 23, text: "Bakersfield California (70 Miles)", completed: false },
+        { id: 24, text: "San Bernardino California (70 Miles)", completed: false },
+        { id: 25, text: "Cathedral City California (70 Miles)", completed: false },
+        { id: 26, text: "San Diego California (70 Miles)", completed: false },
+        { id: 27, text: "Fayetteville, NC (50 Miles)", completed: false },
+        { id: 28, text: "Denver Colorado (50 Miles)", completed: false },
+        { id: 29, text: "Salt Lake City Utah (50 Miles)", completed: false },
+        { id: 30, text: "Tallahassee FL (50 Miles)", completed: false },
+        { id: 31, text: "Atlanta GA (50 Miles)", completed: false },
+        { id: 32, text: "Columbia SC (50 Miles)", completed: false },
+        { id: 33, text: "Charlotte NC (50 Miles)", completed: false },
+        { id: 34, text: "Norfolk VA (50 Miles)", completed: false },
+        { id: 35, text: "Virginia Beach VA (50 Miles)", completed: false },
+        { id: 36, text: "Springfield MA (50 Miles)", completed: false },
+        { id: 37, text: "New Haven CT (50 Miles)", completed: false },
+        { id: 38, text: "Boston MA (50 Miles)", completed: false },
+        { id: 39, text: "New Brunswick NJ (50 Miles)", completed: false },
+        { id: 40, text: "New Ramsey NJ (50 Miles)", completed: false }
+      ]
+    },
+    {
+      category: "Technicians Without Water & Power",
+      items: [
+        { id: 59, text: "(Tallahassee FL)", completed: false },
+        { id: 60, text: "(San Antonio TX)", completed: false },
+        { id: 61, text: "(Columbia SC)", completed: false },
+        { id: 62, text: "(Charlotte NC)", completed: false },
+        { id: 63, text: "(Atlanta GA)", completed: false },
+        { id: 64, text: "(Bakersfield CA)", completed: false },
+        { id: 65, text: "(Las Vegas NV)", completed: false }
+      ]
+    }
+  ];
+
   const [tasks, setTasks] = useState(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("tasks"));
-    return storedTasks || [];
+    const savedTasks = localStorage.getItem("tasks");
+    return savedTasks ? JSON.parse(savedTasks) : defaultData;
   });
   const [taskInput, setTaskInput] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [editingTask, setEditingTask] = useState(null);
-  const [isBlinking, setIsBlinking] = useState(false); // State to control blinking
+  const [isBlinking, setIsBlinking] = useState(false);
 
-  // Update localStorage whenever tasks change
   useEffect(() => {
     if (tasks.length > 0) {
       localStorage.setItem("tasks", JSON.stringify(tasks));
     } else {
-      localStorage.removeItem("tasks"); // Clear localStorage when no tasks remain
+      localStorage.removeItem("tasks");
     }
   }, [tasks]);
 
-  const addTask = () => {
+  const addTask = (categoryIndex) => {
     if (!taskInput.trim()) return;
 
-    // Check if the task already exists
-    const taskExists = tasks.some(
+    const taskExists = tasks[categoryIndex].items.some(
       (task) => task.text.toLowerCase() === taskInput.toLowerCase()
     );
     if (taskExists) {
@@ -33,37 +95,47 @@ const TodoApp = () => {
       return;
     }
 
-    setTasks([...tasks, { id: Date.now(), text: taskInput, completed: false }]);
-    setTaskInput("");
-    setIsBlinking(true); // Trigger blinking effect
+    const newTask = { id: Date.now(), text: taskInput, completed: false };
+    const updatedTasks = [...tasks];
+    updatedTasks[categoryIndex].items.push(newTask);
+    setTasks(updatedTasks);
 
-    // Remove blinking effect after a short delay
+    setTaskInput("");
+    setIsBlinking(true);
+
     setTimeout(() => {
       setIsBlinking(false);
     }, 1000);
   };
 
-  const updateTask = () => {
+  const updateTask = (categoryIndex, taskId) => {
     if (!taskInput.trim()) return;
-    setTasks(
-      tasks.map((task) =>
-        task.id === editingTask ? { ...task, text: taskInput } : task
-      )
+
+    const updatedTasks = [...tasks];
+    updatedTasks[categoryIndex].items = updatedTasks[categoryIndex].items.map(
+      (task) =>
+        task.id === taskId ? { ...task, text: taskInput } : task
     );
+    setTasks(updatedTasks);
     setTaskInput("");
     setEditingTask(null);
   };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const deleteTask = (categoryIndex, taskId) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[categoryIndex].items = updatedTasks[categoryIndex].items.filter(
+      (task) => task.id !== taskId
+    );
+    setTasks(updatedTasks);
   };
 
-  const toggleTaskCompletion = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
+  const toggleTaskCompletion = (categoryIndex, taskId) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[categoryIndex].items = updatedTasks[categoryIndex].items.map(
+      (task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
     );
+    setTasks(updatedTasks);
   };
 
   const startEditing = (task) => {
@@ -71,33 +143,23 @@ const TodoApp = () => {
     setTaskInput(task.text);
   };
 
-  const filteredTasks = tasks.filter((task) =>
-    task.text.toLowerCase().includes(searchInput.toLowerCase())
-  );
-
-  const completedTasks = filteredTasks.filter((task) => task.completed);
-  const incompleteTasks = filteredTasks.filter((task) => !task.completed);
+  const filteredTasks = (categoryIndex) =>
+    tasks[categoryIndex].items.filter((task) =>
+      task.text.toLowerCase().includes(searchInput.toLowerCase())
+    );
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       if (editingTask) {
-        updateTask();
+        updateTask(editingTask.categoryIndex, editingTask.id);
       } else {
-        addTask();
+        addTask(editingTask.categoryIndex);
       }
     }
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "500px",
-        margin: "auto",
-        padding: "20px",
-        background: "#293b46",
-        color: "white",
-      }}
-    >
+    <div style={{ maxWidth: "500px", margin: "auto", padding: "20px", background: "#293b46", color: "white" }}>
       <h1>Car Detailing Areas List</h1>
 
       <input
@@ -118,101 +180,45 @@ const TodoApp = () => {
         style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
       />
 
-      <button
-        onClick={editingTask ? updateTask : addTask}
-        style={{
-          width: "30%",
-          marginBottom: "10px",
-          padding: "8px",
-          background: "#6666ff",
-          color: "white",
-          border: "1px solid",
-          borderRadius: "27px",
-        }}
-      >
-        {editingTask ? "Update Area" : "Add Area"}
-      </button>
-
-      <h2 style={{ fontSize: "13px" }}>Areas Available</h2>
-      <ul style={{ listStyle: "none", padding: "0" }}>
-        {incompleteTasks.map((task) => (
-          <li
-            key={task.id}
+      {tasks.map((category, categoryIndex) => (
+        <div key={categoryIndex}>
+          <h2>{category.category}</h2>
+          <button
+            onClick={() => addTask(categoryIndex)}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "8px",
-              border: "1px solid white",
-              padding: "9px",
-              backgroundColor: task.completed ? "#d3f8d3" : "transparent",
-              cursor: "pointer",
+              width: "100%",
+              marginBottom: "10px",
+              padding: "8px",
+              background: "#6666ff",
+              color: "white",
+              border: "1px solid",
+              borderRadius: "27px",
             }}
-            onClick={() => toggleTaskCompletion(task.id)} // Toggle completion on click
           >
-            <span>{task.text}</span>
-            <div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering toggle
-                  startEditing(task);
-                }}
-                style={{ marginRight: "5px" }}
-              >
-                Edit
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering toggle
-                  deleteTask(task.id);
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+            Add Area
+          </button>
 
-      <h2 style={{ fontSize: "13px" }}>Areas Coverd</h2>
-      <ul style={{ listStyle: "none", padding: "0" }}>
-        {completedTasks.map((task) => (
-          <li
-            key={task.id}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "8px",
-              border: "1px solid white",
-              padding: "9px",
-              backgroundColor: task.completed ? "#d3f8d3" : "transparent",
-              color: task.completed ? "black" : "white",
-              cursor: "pointer",
-            }}
-            onClick={() => toggleTaskCompletion(task.id)} // Toggle completion on click
-          >
-            <span>{task.text}</span>
-            <div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering toggle
-                  startEditing(task);
+          <ul style={{ listStyle: "none", padding: "0" }}>
+            {filteredTasks(categoryIndex).map((task) => (
+              <li
+                key={task.id}
+                style={{
+                  padding: "10px",
+                  background: task.completed ? "#55d955" : "#888",
+                  border: "1px solid #444",
+                  marginBottom: "5px",
+                  cursor: "pointer",
                 }}
-                style={{ marginRight: "5px" }}
+                onClick={() => toggleTaskCompletion(categoryIndex, task.id)}
               >
-                Edit
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering toggle
-                  deleteTask(task.id);
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+                <span>{task.text}</span>
+                <button onClick={() => startEditing(task)}>Edit</button>
+                <button onClick={() => deleteTask(categoryIndex, task.id)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 };

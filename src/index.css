@@ -23,7 +23,7 @@ code {
 #root {
   background: #293b46;
   color: white;
-  height: 100vh;
+  height: fit-content;
 }
 
 body::-webkit-scrollbar {
