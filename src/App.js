@@ -222,28 +222,34 @@ const TodoApp = () => {
           </button>
 
           <ul style={{ listStyle: "none", padding: "0" }}>
-            {filteredTasks(categoryIndex).map((task) => (
-              <li
-                key={task.id}
-                style={{
-                  padding: "10px",
-                  background: task.completed ? "#55d955" : "#888",
-                  border: "1px solid #444",
-                  marginBottom: "5px",
-                  cursor: "pointer",
-                }}
-                onClick={() => toggleTaskCompletion(categoryIndex, task.id)}
-              >
-                <span>{task.text}</span>
-                <button
-                  style={{ marginLeft: "30px" }}
-                  onClick={() => startEditing(task)}
-                >
-                  Edit
-                </button>
-              </li>
-            ))}
-          </ul>
+  {filteredTasks(categoryIndex).map((task) => (
+    <li
+      key={task.id}
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "10px",
+        background: task.completed ? "#55d955" : "#888",
+        border: "1px solid #444",
+        marginBottom: "5px",
+        cursor: "pointer",
+      }}
+      onClick={() => toggleTaskCompletion(categoryIndex, task.id)}
+    >
+      <span>{task.text}</span>
+      <button
+        style={{ marginLeft: "auto" }}
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent triggering task completion
+          startEditing(task);
+        }}
+      >
+        Edit
+      </button>
+    </li>
+  ))}
+</ul>
         </div>
       ))}
     </div>
